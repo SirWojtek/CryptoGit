@@ -1,0 +1,32 @@
+#!/bin/bash
+
+if [[ $# -ne 3 ]]; then
+	echo "Usage: git clone-crypto <repo URL> <directory> <passcode>"
+	exit 1
+fi
+
+if [ ! -d "$2" ]; then
+	echo "Directory does not exist: creating"
+	mkdir $2
+fi
+
+#REPO="https://github.com/SirWojtek/CryptoSandbox"
+REPO=$1
+
+git init $2
+
+cd $2
+echo "$3" > $HOME/git-clone-crypto-temp-password
+cat >> .git/config << 'EOT'
+[filter "aes"]
+    smudge = /home/okulewic/bin/smudgeFilter
+    clean = /home/okulewic/bin/cleanFilter
+[diff "aes"]
+    textconv = /home/okulewic/bin/diffFilter
+EOT
+git remote add origin "$REPO.git" -f
+git config branch.master.remote origin
+git config branch.master.merge refs/heads/master
+git pull
+
+rm $HOME/git-clone-crypto-temp-password
