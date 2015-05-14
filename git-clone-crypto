@@ -10,23 +10,56 @@ if [ ! -d "$2" ]; then
 	mkdir $2
 fi
 
-#REPO="https://github.com/SirWojtek/CryptoSandbox"
+# WARNING: script not tested yet!
+
 REPO=$1
 
 git init $2
 
 cd $2
-echo "$3" > $HOME/git-clone-crypto-temp-password
 cat >> .git/config << 'EOT'
 [filter "aes"]
-    smudge = /home/okulewic/bin/smudgeFilter
-    clean = /home/okulewic/bin/cleanFilter
+    smudge = .crypto/smudgeFilter
+    clean = .crypto/cleanFilter
 [diff "aes"]
-    textconv = /home/okulewic/bin/diffFilter
+    textconv = .crypto/diffFilter
+
 EOT
+
+mkdir .crypto
+cat >> .crypto/cleanFilter << 'EOT'
+#!/bin/bash
+
+SALT=7F23
+PASS=$3
+
+openssl enc -e -base64 -aes-128-cfb -S $SALT -k $PASS
+
+EOT
+chmod +x .crypto/cleanFilter
+########################################################
+cat >> .crypto/smudgeFilter << 'EOT'
+#!/bin/bash
+
+PASS=$3
+
+openssl enc -d -base64 -aes-128-cfb -k $PASS
+
+EOT
+chmod +x .crypto/smudgeFilter
+########################################################
+cat >> .crypto/diffFilter << 'EOT'
+#!/bin/bash
+
+PASS=$3
+
+openssl enc -d -base64 -aes-128-cfb -k $PASS -in "$1" || cat "$1"
+
+EOT
+chmod +x .crypto/diffFilter
+########################################################
+
 git remote add origin "$REPO.git" -f
 git config branch.master.remote origin
 git config branch.master.merge refs/heads/master
 git pull
-
-rm $HOME/git-clone-crypto-temp-password
