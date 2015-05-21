@@ -1,5 +1,0 @@
-#!/bin/bash
-
-PASS=`cat $HOME/git-clone-crypto-temp-password`
-
-openssl enc -d -base64 -aes-128-cfb -k $PASS

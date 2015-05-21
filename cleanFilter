@@ -1,6 +1,0 @@
-#!/bin/bash
-
-SALT=7F23
-PASS=`cat $HOME/git-clone-crypto-temp-password`
-
-openssl enc -e -base64 -aes-128-cfb -S $SALT -k $PASS
