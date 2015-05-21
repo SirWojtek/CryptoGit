@@ -5,60 +5,12 @@ if [[ $# -ne 3 ]]; then
 	exit 1
 fi
 
-if [ ! -d "$2" ]; then
-	echo "Directory does not exist: creating"
-	mkdir $2
-fi
-
 REPO=$1
+DIRECTORY=$2
 PASS=$3
 
-GIT_CONFIG=".git/config"
-GIT_IGNORE=".gitignore"
-CRYPTO_DIR=".git/.crypto"
-CLEAN_FILTER="$CRYPTO_DIR/cleanFilter"
-SMUDGE_FILTER="$CRYPTO_DIR/smudgeFilter"
-DIFF_FILTER="$CRYPTO_DIR/diffFilter"
-
-git init $2
-
-cd $2
-echo '[filter "aes"]' >> $GIT_CONFIG
-echo "    smudge = $SMUDGE_FILTER" >> $GIT_CONFIG
-echo "    clean = $CLEAN_FILTER" >> $GIT_CONFIG
-echo '[diff "aes"]' >> $GIT_CONFIG
-echo "    textconv = $DIFF_FILTER" >> $GIT_CONFIG
-echo "" >> $GIT_CONFIG
-########################################################
-mkdir $CRYPTO_DIR
-########################################################
-echo "#!/bin/bash" >> $CLEAN_FILTER
-echo "" >> $CLEAN_FILTER
-echo "SALT=7F23" >> $CLEAN_FILTER
-echo "" >> $CLEAN_FILTER
-echo "PASS=$PASS" >> $CLEAN_FILTER
-echo "" >> $CLEAN_FILTER
-echo 'openssl enc -e -base64 -aes-128-cfb -S $SALT -k $PASS' >> $CLEAN_FILTER
-echo "" >> $CLEAN_FILTER
-chmod +x $CLEAN_FILTER
-########################################################
-echo "#!/bin/bash" >> $SMUDGE_FILTER
-echo "" >> $SMUDGE_FILTER
-echo "PASS=$PASS" >> $SMUDGE_FILTER
-echo "" >> $SMUDGE_FILTER
-echo 'openssl enc -d -base64 -aes-128-cfb -k $PASS' >> $SMUDGE_FILTER
-echo "" >> $SMUDGE_FILTER
-chmod +x $SMUDGE_FILTER
-########################################################'
-echo "#!/bin/bash" >> $DIFF_FILTER
-echo "" >> $DIFF_FILTER
-echo "PASS=$3" >> $DIFF_FILTER
-echo "" >> $DIFF_FILTER
-echo 'openssl enc -d -base64 -aes-128-cfb -k $PASS -in "$1" || cat "$1"' >> $DIFF_FILTER
-echo "" >> $DIFF_FILTER
-chmod +x $DIFF_FILTER
-########################################################
-
+git init-crypto $DIRECTORY $PASS
+cd $DIRECTORY
 git remote add origin "$REPO.git" -f
 git config branch.master.remote origin
 git config branch.master.merge refs/heads/master
