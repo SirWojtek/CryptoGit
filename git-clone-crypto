@@ -10,53 +10,53 @@ if [ ! -d "$2" ]; then
 	mkdir $2
 fi
 
-# WARNING: script not tested yet!
-
 REPO=$1
+PASS=$3
+
+GIT_CONFIG=".git/config"
+GIT_IGNORE=".gitignore"
+CRYPTO_DIR=".git/.crypto"
+CLEAN_FILTER="$CRYPTO_DIR/cleanFilter"
+SMUDGE_FILTER="$CRYPTO_DIR/smudgeFilter"
+DIFF_FILTER="$CRYPTO_DIR/diffFilter"
 
 git init $2
 
 cd $2
-cat >> .git/config << 'EOT'
-[filter "aes"]
-    smudge = .crypto/smudgeFilter
-    clean = .crypto/cleanFilter
-[diff "aes"]
-    textconv = .crypto/diffFilter
-
-EOT
-
-mkdir .crypto
-cat >> .crypto/cleanFilter << 'EOT'
-#!/bin/bash
-
-SALT=7F23
-PASS=$3
-
-openssl enc -e -base64 -aes-128-cfb -S $SALT -k $PASS
-
-EOT
-chmod +x .crypto/cleanFilter
+echo '[filter "aes"]' >> $GIT_CONFIG
+echo "    smudge = $SMUDGE_FILTER" >> $GIT_CONFIG
+echo "    clean = $CLEAN_FILTER" >> $GIT_CONFIG
+echo '[diff "aes"]' >> $GIT_CONFIG
+echo "    textconv = $DIFF_FILTER" >> $GIT_CONFIG
+echo "" >> $GIT_CONFIG
 ########################################################
-cat >> .crypto/smudgeFilter << 'EOT'
-#!/bin/bash
-
-PASS=$3
-
-openssl enc -d -base64 -aes-128-cfb -k $PASS
-
-EOT
-chmod +x .crypto/smudgeFilter
+mkdir $CRYPTO_DIR
 ########################################################
-cat >> .crypto/diffFilter << 'EOT'
-#!/bin/bash
-
-PASS=$3
-
-openssl enc -d -base64 -aes-128-cfb -k $PASS -in "$1" || cat "$1"
-
-EOT
-chmod +x .crypto/diffFilter
+echo "#!/bin/bash" >> $CLEAN_FILTER
+echo "" >> $CLEAN_FILTER
+echo "SALT=7F23" >> $CLEAN_FILTER
+echo "" >> $CLEAN_FILTER
+echo "PASS=$PASS" >> $CLEAN_FILTER
+echo "" >> $CLEAN_FILTER
+echo 'openssl enc -e -base64 -aes-128-cfb -S $SALT -k $PASS' >> $CLEAN_FILTER
+echo "" >> $CLEAN_FILTER
+chmod +x $CLEAN_FILTER
+########################################################
+echo "#!/bin/bash" >> $SMUDGE_FILTER
+echo "" >> $SMUDGE_FILTER
+echo "PASS=$PASS" >> $SMUDGE_FILTER
+echo "" >> $SMUDGE_FILTER
+echo 'openssl enc -d -base64 -aes-128-cfb -k $PASS' >> $SMUDGE_FILTER
+echo "" >> $SMUDGE_FILTER
+chmod +x $SMUDGE_FILTER
+########################################################'
+echo "#!/bin/bash" >> $DIFF_FILTER
+echo "" >> $DIFF_FILTER
+echo "PASS=$3" >> $DIFF_FILTER
+echo "" >> $DIFF_FILTER
+echo 'openssl enc -d -base64 -aes-128-cfb -k $PASS -in "$1" || cat "$1"' >> $DIFF_FILTER
+echo "" >> $DIFF_FILTER
+chmod +x $DIFF_FILTER
 ########################################################
 
 git remote add origin "$REPO.git" -f
