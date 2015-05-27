@@ -63,8 +63,10 @@ echo "" >> $DIFF_FILTER
 chmod +x $DIFF_FILTER
 ########################################################
 
-git add .
-git commit -m "Changed crypto password"
+git rm --cached -r *
+git commit -m "Changing crypto password part 1 of 2"
+git add *
+git commit -m "Changing crypto password part 2 of 2"
 git push origin master
 cd ..
 rm -rf $DIRECTORY
@@ -131,8 +133,10 @@ echo "" >> $DIFF_FILTER
 chmod +x $DIFF_FILTER
 ########################################################
 
-git add .
-git commit -m "Changed crypto password"
+git rm --cached -r *
+git commit -m "Changing crypto password part 1 of 2"
+git add *
+git commit -m "Changing crypto password part 2 of 2"
 git push origin master
 
 fi
