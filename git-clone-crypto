@@ -5,6 +5,11 @@ if [[ $# -ne 3 ]]; then
 	exit 1
 fi
 
+if [ ! -d "$2" ]; then
+	echo "Specified directory does not exist, creating."
+	mkdir $2
+fi
+
 REPO=$1
 DIRECTORY=$2
 PASS=$3

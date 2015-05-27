@@ -1,0 +1,138 @@
+#!/bin/bash
+
+########################################################
+# Here starts the arg variant
+########################################################
+
+if [[ $# -eq 1 ]]; then
+
+echo "Crypto password change with URL variant: script will download repository, change the password and commit it before you know it!"
+echo -n Old password: 
+read -s OLDPASSWORD
+printf '\n'
+echo -n New password: 
+read -s NEWPASSWORD
+printf '\n'
+echo -n Repeat new password: 
+read -s CONFIRMPASSWORD
+printf '\n'
+
+if [ "$NEWPASSWORD" != "$CONFIRMPASSWORD" ]; then
+	echo "New passwords don't match"
+	exit
+fi
+
+REPO=$1
+DIRECTORY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+CRYPTO_DIR=".git/.crypto"
+CLEAN_FILTER="$CRYPTO_DIR/cleanFilter"
+SMUDGE_FILTER="$CRYPTO_DIR/smudgeFilter"
+DIFF_FILTER="$CRYPTO_DIR/diffFilter"
+
+git clone-crypto $REPO $DIRECTORY $OLDPASSWORD
+cd $DIRECTORY
+
+########################################################
+rm -rf $CRYPTO_DIR
+mkdir $CRYPTO_DIR
+########################################################
+echo "#!/bin/bash" >> $CLEAN_FILTER
+echo "" >> $CLEAN_FILTER
+echo "SALT=7F23" >> $CLEAN_FILTER
+echo "" >> $CLEAN_FILTER
+echo "PASS=$NEWPASSWORD" >> $CLEAN_FILTER
+echo "" >> $CLEAN_FILTER
+echo 'openssl enc -e -base64 -aes-128-cfb -S $SALT -k $PASS' >> $CLEAN_FILTER
+echo "" >> $CLEAN_FILTER
+chmod +x $CLEAN_FILTER
+########################################################
+echo "#!/bin/bash" >> $SMUDGE_FILTER
+echo "" >> $SMUDGE_FILTER
+echo "PASS=$NEWPASSWORD" >> $SMUDGE_FILTER
+echo "" >> $SMUDGE_FILTER
+echo 'openssl enc -d -base64 -aes-128-cfb -k $PASS' >> $SMUDGE_FILTER
+echo "" >> $SMUDGE_FILTER
+chmod +x $SMUDGE_FILTER
+########################################################'
+echo "#!/bin/bash" >> $DIFF_FILTER
+echo "" >> $DIFF_FILTER
+echo "PASS=$NEWPASSWORD" >> $DIFF_FILTER
+echo "" >> $DIFF_FILTER
+echo 'openssl enc -d -base64 -aes-128-cfb -k $PASS -in "$1" || cat "$1"' >> $DIFF_FILTER
+echo "" >> $DIFF_FILTER
+chmod +x $DIFF_FILTER
+########################################################
+
+git add .
+git commit -m "Changed crypto password"
+git push origin master
+cd ..
+rm -rf $DIRECTORY
+fi
+
+########################################################
+# Here starts the no-arg variant
+########################################################
+
+if [[ $# -eq 0 ]]; then
+
+echo "Crypto password change with local repository variant: script will change password on already downloaded repository and commit it before you know it!"
+
+echo -n New password: 
+read -s NEWPASSWORD
+printf '\n'
+echo -n Repeat new password: 
+read -s CONFIRMPASSWORD
+printf '\n'
+
+if [ "$NEWPASSWORD" != "$CONFIRMPASSWORD" ]; then
+	echo "New passwords don't match"
+	exit
+fi
+
+CRYPTO_DIR=".git/.crypto"
+CLEAN_FILTER="$CRYPTO_DIR/cleanFilter"
+SMUDGE_FILTER="$CRYPTO_DIR/smudgeFilter"
+DIFF_FILTER="$CRYPTO_DIR/diffFilter"
+
+if [ ! -d "$CRYPTO_DIR" ]; then
+	echo "This directory does not contain crypto dir .git/.crypto -  check if you're in the right place"
+	exit
+fi
+
+########################################################
+rm -rf $CRYPTO_DIR
+mkdir $CRYPTO_DIR
+########################################################
+echo "#!/bin/bash" >> $CLEAN_FILTER
+echo "" >> $CLEAN_FILTER
+echo "SALT=7F23" >> $CLEAN_FILTER
+echo "" >> $CLEAN_FILTER
+echo "PASS=$NEWPASSWORD" >> $CLEAN_FILTER
+echo "" >> $CLEAN_FILTER
+echo 'openssl enc -e -base64 -aes-128-cfb -S $SALT -k $PASS' >> $CLEAN_FILTER
+echo "" >> $CLEAN_FILTER
+chmod +x $CLEAN_FILTER
+########################################################
+echo "#!/bin/bash" >> $SMUDGE_FILTER
+echo "" >> $SMUDGE_FILTER
+echo "PASS=$NEWPASSWORD" >> $SMUDGE_FILTER
+echo "" >> $SMUDGE_FILTER
+echo 'openssl enc -d -base64 -aes-128-cfb -k $PASS' >> $SMUDGE_FILTER
+echo "" >> $SMUDGE_FILTER
+chmod +x $SMUDGE_FILTER
+########################################################'
+echo "#!/bin/bash" >> $DIFF_FILTER
+echo "" >> $DIFF_FILTER
+echo "PASS=$NEWPASSWORD" >> $DIFF_FILTER
+echo "" >> $DIFF_FILTER
+echo 'openssl enc -d -base64 -aes-128-cfb -k $PASS -in "$1" || cat "$1"' >> $DIFF_FILTER
+echo "" >> $DIFF_FILTER
+chmod +x $DIFF_FILTER
+########################################################
+
+git add .
+git commit -m "Changed crypto password"
+git push origin master
+
+fi

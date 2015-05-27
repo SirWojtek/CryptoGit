@@ -50,7 +50,7 @@ chmod +x $SMUDGE_FILTER
 ########################################################'
 echo "#!/bin/bash" >> $DIFF_FILTER
 echo "" >> $DIFF_FILTER
-echo "PASS=$3" >> $DIFF_FILTER
+echo "PASS=$PASS" >> $DIFF_FILTER
 echo "" >> $DIFF_FILTER
 echo 'openssl enc -d -base64 -aes-128-cfb -k $PASS -in "$1" || cat "$1"' >> $DIFF_FILTER
 echo "" >> $DIFF_FILTER
