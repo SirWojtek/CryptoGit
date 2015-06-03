@@ -1,12 +1,21 @@
 #!/bin/bash
 
+# if [[ $# -ne 1 ]]; then
+#     echo "Usage: git init-crypto <directory>"
+#     exit 1
+# fi
+
 if [[ $# -ne 2 ]]; then
-    echo "Usage: git init-crypto <directory> <passcode>"
-    exit 1
+echo -n Password: 
+read -s PASS
+printf '\n'
+fi
+
+if [[ $# -eq 2 ]]; then
+PASS=$2
 fi
 
 FOLDER=$1
-PASS=$2
 GIT_CONFIG=".git/config"
 CRYPTO_DIR=".git/.crypto"
 CLEAN_FILTER="$CRYPTO_DIR/cleanFilter"
