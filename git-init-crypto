@@ -17,6 +17,7 @@ fi
 
 FOLDER=$1
 GIT_CONFIG=".git/config"
+GIT_ATTRIBUTES=".gitattributes"
 CRYPTO_DIR=".git/.crypto"
 CLEAN_FILTER="$CRYPTO_DIR/cleanFilter"
 SMUDGE_FILTER="$CRYPTO_DIR/smudgeFilter"
@@ -30,6 +31,9 @@ fi
 git init $FOLDER
 
 cd $FOLDER
+echo "*.cpp filter=aes diff=aes" >> $GIT_ATTRIBUTES
+echo "*.hpp filter=aes diff=aes" >> $GIT_ATTRIBUTES
+########################################################
 echo '[filter "aes"]' >> $GIT_CONFIG
 echo "    smudge = $SMUDGE_FILTER" >> $GIT_CONFIG
 echo "    clean = $CLEAN_FILTER" >> $GIT_CONFIG
