@@ -6,7 +6,7 @@
 # fi
 
 if [[ $# -ne 2 ]]; then
-echo -n Password: 
+echo -n Password:
 read -s PASS
 printf '\n'
 fi
@@ -29,10 +29,14 @@ if [ ! -d "$FOLDER" ]; then
 fi
 
 git init $FOLDER
-
 cd $FOLDER
-echo "*.cpp filter=aes diff=aes" >> $GIT_ATTRIBUTES
-echo "*.hpp filter=aes diff=aes" >> $GIT_ATTRIBUTES
+
+if [ -n "$NO_CREATE_GITATTRIBUTES" ]; then
+    echo "Skipping creation of .gitattributes file"
+else
+    echo "*.cpp filter=aes diff=aes" >> $GIT_ATTRIBUTES
+    echo "*.hpp filter=aes diff=aes" >> $GIT_ATTRIBUTES
+fi
 ########################################################
 echo '[filter "aes"]' >> $GIT_CONFIG
 echo "    smudge = $SMUDGE_FILTER" >> $GIT_CONFIG
