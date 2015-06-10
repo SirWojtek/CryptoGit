@@ -10,14 +10,14 @@ if [ ! -d "$2" ]; then
 	mkdir $2
 fi
 
-echo -n Password: 
+echo -n Password:
 read -s PASS
 printf '\n'
 
 REPO=$1
 DIRECTORY=$2
 
-git init-crypto $DIRECTORY $PASS
+NO_CREATE_GITATTRIBUTES="true" git init-crypto $DIRECTORY $PASS
 cd $DIRECTORY
 git remote add origin "$REPO.git" -f
 git config branch.master.remote origin
