@@ -1,0 +1,8 @@
+#!/bin/bash
+
+printf "Help page for Cryptography addon for Git revision control system.\n\n"
+printf "This addon introduces three git commands that allow you to cipher your repository:\n\n"
+printf "git init-crypto <dir> - initializes empty repository with crypting filters. Asks silently for password and initializes empty repository with that password.\n\n"
+printf "git clone-crypto <repository URL> <dir> - clones repository with decrypting. Asks silently for password and clones specified repository to specified directory with decrypting upon pulling content. Creates directory if doesn't exist.\n\n"
+printf "git passwd-crypto <optional: repository URL> - changes password of current repository. Asks silently for old password and new password. If repository URL was given, it will be cloned to temporary directory.\nIf not, this command should only be run in local repository copy. Local repository indexes will be deleted, password in filter will be changed and indexes will be added again to push content ciphered with new password.\n\n"
+printf "Please refer to attached documentation for more details.\n"
