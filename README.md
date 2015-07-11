@@ -38,10 +38,31 @@ It's done! Now you can work with GitCrypto.
 
 ## Usage
 ### Initializing empty repository
+Init can be done by typing command:
+```
+git init-crypto [destination_folder]
+```
+After type this command you will be prompt for password.
+Plugin will create empty git repository ready for work.
 
-### Cloning already existing encrypted repository
+### Cloning encrypted repository
+Clone already existing repository can be done by typing:
+```
+git clone-crypto [repo_url] [destination_folder]
+```
+After type command you will be asked for repository password.
+If you type incorrect password repository will be cloned anyway
+but downloaded files will be decrypted incorectly.
+
+### Working with repository
+You can work with encrypted repository like before.
+Your local copy is unencrypted and all git commands should work well.
+Encryption is done when you type `git push` command.
 
 ### Changing encryption key
+With typing `git passwd-crypto` you can change repository encryption password.
+Take noticed that all files will be encrypted once again with new password -
+this can cause a lot of changes in repository.
 
 ## Additional info
 If you want to change install path run make with `PREFIX=<path>` option.
@@ -49,11 +70,13 @@ Take notice that your custom path must be added to PATH variable.
 
 
 By default encryption is set for *.cpp and *.hpp files. To change it open _git-init-crypto_ and edit lines:
-
 ```
 echo "*.cpp filter=aes diff=aes" >> $GIT_ATTRIBUTES
 echo "*.hpp filter=aes diff=aes" >> $GIT_ATTRIBUTES
 ```
-
 You can add/remove additional extensions by manipulating these lines.
 Don't forget to install plugin again after editing file.
+
+
+You can remove plugin by `make clean` command.
+If you used PREFIX you must also type it for uninstall command.
