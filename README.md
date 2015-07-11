@@ -48,7 +48,7 @@ If you want to change install path run make with `PREFIX=<path>` option.
 Take notice that your custom path must be added to PATH variable.
 
 
-By default encryption is set for *.cpp and *.hpp files. To change it open git-init-crypto and edit lines:
+By default encryption is set for *.cpp and *.hpp files. To change it open _git-init-crypto_ and edit lines:
 
 ```
 echo "*.cpp filter=aes diff=aes" >> $GIT_ATTRIBUTES
