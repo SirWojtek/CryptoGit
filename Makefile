@@ -1,6 +1,6 @@
 
-PREFIX=/
-INSTALL_PATH=$(PREFIX)bin
+PREFIX=/usr
+INSTALL_PATH=$(PREFIX)/bin
 
 CLONE_FILE=git-clone-crypto
 INIT_FILE=git-init-crypto
