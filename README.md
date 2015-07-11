@@ -51,7 +51,7 @@ Take notice that your custom path must be added to PATH variable.
 By default encryption is set for *.cpp and *.hpp files. To change it open git-init-crypto and edit lines:
 
 ```
-echo "*.cpp filter=aes diff=aes" >> $GIT_ATTRIBUTES`
+echo "*.cpp filter=aes diff=aes" >> $GIT_ATTRIBUTES
 echo "*.hpp filter=aes diff=aes" >> $GIT_ATTRIBUTES
 ```
 
