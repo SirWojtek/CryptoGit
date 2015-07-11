@@ -15,7 +15,7 @@ https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes
 
 GitCrypto uses smudge filter for decryption (checkout working copy)
 and clean filter for encryption (push changes).
-Filters work is done by aes128 CFB algorithm installed with GnuPG package.
+Filters work is done by aes128 CFB algorithm included in GnuPG package.
 
 Integration with git is ensured by:
 - placing plugin files in folder added to PATH,
@@ -49,8 +49,7 @@ Take notice that your custom path must be added to PATH variable.
 
 
 By default encryption is set for *.cpp and *.hpp files. To change it open git-init-crypto and edit lines:
-
-`echo "*.cpp filter=aes diff=aes" >> $GIT_ATTRIBUTES
-echo "*.hpp filter=aes diff=aes" >> $GIT_ATTRIBUTES`
-
-You can add/remove additional extensions by adding/removing these lines.
+`echo "*.cpp filter=aes diff=aes" >> $GIT_ATTRIBUTES`
+`echo "*.hpp filter=aes diff=aes" >> $GIT_ATTRIBUTES`
+You can add/remove additional extensions by manipulating these lines.
+Don't forget to install plugin again after editing file.
