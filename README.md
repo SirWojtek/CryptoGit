@@ -25,7 +25,7 @@ Integration with git is ensured by:
 ## Prequisitions
 - Git
 - MakeFile
-- GnuPG
+- OpenSSL
 
 ## Install instructions
 1. Clone repository:
