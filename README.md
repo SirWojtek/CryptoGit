@@ -80,3 +80,8 @@ Don't forget to install plugin again after editing file.
 
 You can remove plugin by `make clean` command.
 If you used PREFIX you must also type it for uninstall command.
+
+## Limitations
+Repositories created with GitCrypto use more disk space than unencrypted repos
+because encrypted files are threated as binary files.
+Changed inside binary file causes whole file to be rewritten when push.
