@@ -1,18 +1,20 @@
 #!/bin/bash
 
-# if [[ $# -ne 1 ]]; then
-#     echo "Usage: git init-crypto <directory>"
-#     exit 1
-# fi
-
-if [[ $# -ne 2 ]]; then
-echo -n Password:
-read -s PASS
-printf '\n'
-fi
-
 if [[ $# -eq 2 ]]; then
-PASS=$2
+    PASS=$2
+else
+    echo -n Enter password: 
+    read -s PASS
+    printf '\n'
+
+    echo -n Retype password: 
+    read -s RETYPED_PASS
+    printf '\n'
+
+    if [ "$PASS" != "$RETYPED_PASS" ]; then
+        echo "Passwords does not match!"
+        exit -1
+    fi
 fi
 
 FOLDER=$1
@@ -36,6 +38,8 @@ if [ -n "$NO_CREATE_GITATTRIBUTES" ]; then
 else
     echo "*.cpp filter=aes diff=aes" >> $GIT_ATTRIBUTES
     echo "*.hpp filter=aes diff=aes" >> $GIT_ATTRIBUTES
+    git add .gitattributes
+    git commit -m"Initial CryptoGit commit"
 fi
 ########################################################
 echo '[filter "aes"]' >> $GIT_CONFIG

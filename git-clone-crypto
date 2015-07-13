@@ -10,9 +10,18 @@ if [ ! -d "$2" ]; then
 	mkdir $2
 fi
 
-echo -n Password:
+echo -n Enter password: 
 read -s PASS
 printf '\n'
+
+echo -n Retype password: 
+read -s RETYPED_PASS
+printf '\n'
+
+if [ "$PASS" != "$RETYPED_PASS" ]; then
+    echo "Passwords does not match!"
+    exit -1
+fi
 
 REPO=$1
 DIRECTORY=$2
